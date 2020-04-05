@@ -30,7 +30,7 @@ def render_content_with_text(key, value):
         if key.find("btn") != -1:
             value = value.replace(TEXT_PLACE_HOLDER, Utils.get_random_text())
         elif key.find("link") != -1:
-            value = value.replace(TEXT_PLACE_HOLDER, Utils.get_random_text())
+            value = value.replace(TEXT_PLACE_HOLDER, Utils.get_random_text(space_number=0))
         elif key.find("title") != -1:
             value = value.replace(TEXT_PLACE_HOLDER, Utils.get_random_text(length_text=20, space_number=3))
         elif key.find("text") != -1:

@@ -35,6 +35,8 @@ for f in os.listdir(input_path):
 
         assert np.array_equal(img, retrieve)
 
-        shutil.copyfile("{}/{}.gui".format(input_path, file_name), "{}/{}.gui".format(output_path, file_name))
+        gui_file_name = file_name[:file_name.find("_tablet")]
+        if os.path.isfile("{}/{}.gui".format(input_path, gui_file_name)):
+            shutil.copyfile("{}/{}.gui".format(input_path, gui_file_name), "{}/{}.gui".format(output_path, gui_file_name))
 
 print("Numpy arrays saved in {}".format(output_path))

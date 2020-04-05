@@ -30,9 +30,9 @@ for f in os.listdir(input_path):
         path_gui = "{}/{}".format(input_path, f)
         file_name = f[:f.find(".gui")]
 
-        if os.path.isfile("{}/{}.png".format(input_path, file_name)):
-            path_img = "{}/{}.png".format(input_path, file_name)
-            paths.append(file_name)
+        if os.path.isfile("{}/{}_tablet.png".format(input_path, file_name)):
+            if os.path.isfile("{}/{}_desktop.png".format(input_path, file_name)):
+                paths.append(file_name)
 
 evaluation_samples_number = len(paths) / (distribution + 1)
 training_samples_number = evaluation_samples_number * distribution
@@ -86,11 +86,13 @@ if not os.path.exists("{}/{}".format(os.path.dirname(input_path), TRAINING_SET_N
     os.makedirs("{}/{}".format(os.path.dirname(input_path), TRAINING_SET_NAME))
 
 for path in eval_set:
-    shutil.copyfile("{}/{}.png".format(input_path, path), "{}/{}/{}.png".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
+    shutil.copyfile("{}/{}_tablet.png".format(input_path, path), "{}/{}/{}_tablet.png".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
+    shutil.copyfile("{}/{}_desktop.png".format(input_path, path), "{}/{}/{}_desktop.png".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
     shutil.copyfile("{}/{}.gui".format(input_path, path), "{}/{}/{}.gui".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
 
 for path in train_set:
-    shutil.copyfile("{}/{}.png".format(input_path, path), "{}/{}/{}.png".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
+    shutil.copyfile("{}/{}_tablet.png".format(input_path, path), "{}/{}/{}_tablet.png".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
+    shutil.copyfile("{}/{}_desktop.png".format(input_path, path), "{}/{}/{}_desktop.png".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
     shutil.copyfile("{}/{}.gui".format(input_path, path), "{}/{}/{}.gui".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
 
 print("Training dataset: {}/training_set".format(os.path.dirname(input_path), path))

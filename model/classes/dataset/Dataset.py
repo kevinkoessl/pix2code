@@ -14,7 +14,8 @@ class Dataset:
         self.output_size = None
 
         self.ids = []
-        self.input_images = []
+        self.input_images_tablet = []
+        self.input_images_desktop = []
         self.partial_sequences = []
         self.next_words = []
 
@@ -49,12 +50,17 @@ class Dataset:
                 gui = open("{}/{}".format(path, f), 'r')
                 file_name = f[:f.find(".gui")]
 
-                if os.path.isfile("{}/{}.png".format(path, file_name)):
-                    img = Utils.get_preprocessed_img("{}/{}.png".format(path, file_name), IMAGE_SIZE)
-                    self.append(file_name, gui, img)
-                elif os.path.isfile("{}/{}.npz".format(path, file_name)):
-                    img = np.load("{}/{}.npz".format(path, file_name))["features"]
-                    self.append(file_name, gui, img)
+                if os.path.isfile("{}/{}_tablet.png".format(path, file_name)):
+                    tablet_img = Utils.get_preprocessed_img("{}/{}_tablet.png".format(path, file_name), IMAGE_SIZE)
+                    if os.path.isfile("{}/_desktop.png".format(path, file_name)):
+                        desktop_img = Utils.get_preprocessed_img("{}/{}_desktop.png".format(path, file_name), IMAGE_SIZE)
+                        self.append(file_name, gui, tablet_img, desktop_img)
+                elif os.path.isfile("{}/{}_tablet.npz".format(path, file_name)):
+                    tablet_img = np.load("{}/{}_tablet.npz".format(path, file_name))["features"]
+
+                    if os.path.isfile("{}/{}_desktop.npz".format(path, file_name)):
+                        desktop_img = np.load("{}/{}_desktop.npz".format(path, file_name))["features"]
+                        self.append(file_name, gui, tablet_img, desktop_img)
 
         print("Generating sparse vectors...")
         self.voc.create_binary_representation()
@@ -65,13 +71,13 @@ class Dataset:
             self.partial_sequences = self.indexify(self.partial_sequences, self.voc)
 
         self.size = len(self.ids)
-        assert self.size == len(self.input_images) == len(self.partial_sequences) == len(self.next_words)
+        assert self.size == len(self.input_images_tablet) == len(self.input_images_desktop) == len(self.partial_sequences) == len(self.next_words)
         assert self.voc.size == len(self.voc.vocabulary)
 
         print("Dataset size: {}".format(self.size))
         print("Vocabulary size: {}".format(self.voc.size))
 
-        self.input_shape = self.input_images[0].shape
+        self.input_shape = self.input_images_tablet[0].shape
         self.output_size = self.voc.size
 
         print("Input shape: {}".format(self.input_shape))
@@ -79,11 +85,12 @@ class Dataset:
 
     def convert_arrays(self):
         print("Convert arrays...")
-        self.input_images = np.array(self.input_images)
+        self.input_images_tablet = np.array(self.input_images_tablet)
+        self.input_images_desktop = np.array(self.input_images_desktop)
         self.partial_sequences = np.array(self.partial_sequences)
         self.next_words = np.array(self.next_words)
 
-    def append(self, sample_id, gui, img, to_show=False):
+    def append(self, sample_id, gui, tablet_img, desktop_img, to_show=False):
         if to_show:
             pic = img * 255
             pic = np.array(pic, dtype=np.uint8)
@@ -106,7 +113,8 @@ class Dataset:
             label = a[j + CONTEXT_LENGTH]
 
             self.ids.append(sample_id)
-            self.input_images.append(img)
+            self.input_images_tablet.append(tablet_img)
+            self.input_images_desktop.append(desktop_img)
             self.partial_sequences.append(context)
             self.next_words.append(label)
 
