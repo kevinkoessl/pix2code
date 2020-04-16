@@ -20,7 +20,10 @@ class Utils:
     def get_preprocessed_img(img_path, image_size):
         import cv2
         img = cv2.imread(img_path)
+        kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
+        img = cv2.filter2D(img, -1, kernel)
         img = cv2.resize(img, (image_size, image_size))
+
         img = img.astype('float32')
         img /= 255
         return img

@@ -159,3 +159,4 @@ datasets/*
 
 # Training output
 bin/
+/pix2code_bin/

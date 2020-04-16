@@ -18,9 +18,10 @@ if len(argv) < 4:
 else:
     trained_weights_path = argv[0]
     trained_model_name = argv[1]
-    input_path = argv[2]
-    output_path = argv[3]
-    search_method = "greedy" if len(argv) < 5 else argv[4]
+    input_path_tablet = argv[2]
+    input_path_desktop = argv[3]
+    output_path = argv[4]
+    search_method = "greedy" if len(argv) < 6 else argv[5]
 
 meta_dataset = np.load("{}/meta_dataset.npy".format(trained_weights_path))
 input_shape = meta_dataset[0]
@@ -31,16 +32,20 @@ model.load(trained_model_name)
 
 sampler = Sampler(trained_weights_path, input_shape, output_size, CONTEXT_LENGTH)
 
-file_name = basename(input_path)[:basename(input_path).find(".")]
-evaluation_img = Utils.get_preprocessed_img(input_path, IMAGE_SIZE)
+file_name = basename(input_path_tablet)[:basename(input_path_tablet).find(".")]
+
+evaluation_img_tablet = Utils.get_preprocessed_img(input_path_tablet, IMAGE_SIZE)
+Utils.show(evaluation_img_tablet)
+evaluation_img_desktop = Utils.get_preprocessed_img(input_path_desktop, IMAGE_SIZE)
+Utils.show(evaluation_img_desktop)
 
 if search_method == "greedy":
-    result, _ = sampler.predict_greedy(model, np.array([evaluation_img]))
+    result, _ = sampler.predict_greedy(model, np.array([evaluation_img_tablet]), np.array([evaluation_img_desktop]))
     print("Result greedy: {}".format(result))
 else:
     beam_width = int(search_method)
     print("Search with beam width: {}".format(beam_width))
-    result, _ = sampler.predict_beam_search(model, np.array([evaluation_img]), beam_width=beam_width)
+    result, _ = sampler.predict_beam_search(model, np.array([evaluation_img_tablet]), np.array([evaluation_img_desktop]), beam_width=beam_width)
     print("Result beam: {}".format(result))
 
 with open("{}/{}.gui".format(output_path, file_name), 'w') as out_f:

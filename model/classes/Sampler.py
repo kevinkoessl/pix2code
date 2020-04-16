@@ -21,21 +21,25 @@ class Sampler:
 
         self.context_length = context_length
 
-    def predict_greedy(self, model, input_img, require_sparse_label=True, sequence_length=150, verbose=False):
+    def predict_greedy(self, model, input_img_tablet, input_img_desktop, require_sparse_label=True, sequence_length=150, verbose=False):
         current_context = [self.voc.vocabulary[PLACEHOLDER]] * (self.context_length - 1)
         current_context.append(self.voc.vocabulary[START_TOKEN])
         if require_sparse_label:
             current_context = Utils.sparsify(current_context, self.output_size)
 
+
         predictions = START_TOKEN
         out_probas = []
+
 
         for i in range(0, sequence_length):
             if verbose:
                 print("predicting {}/{}...".format(i, sequence_length))
 
-            probas = model.predict(input_img, np.array([current_context]))
+            probas = model.predict(input_img_tablet, input_img_desktop, np.array([current_context]))
+
             prediction = np.argmax(probas)
+
             out_probas.append(probas)
 
             new_context = []
@@ -45,6 +49,7 @@ class Sampler:
             if require_sparse_label:
                 sparse_label = np.zeros(self.output_size)
                 sparse_label[prediction] = 1
+
                 new_context.append(sparse_label)
             else:
                 new_context.append(prediction)
@@ -58,8 +63,8 @@ class Sampler:
 
         return predictions, out_probas
 
-    def recursive_beam_search(self, model, input_img, current_context, beam, current_node, sequence_length):
-        probas = model.predict(input_img, np.array([current_context]))
+    def recursive_beam_search(self, model, input_img_tablet, input_img_desktop, current_context, beam, current_node, sequence_length):
+        probas = model.predict(input_img_tablet, input_img_desktop, np.array([current_context]))
 
         predictions = []
         for i in range(0, len(probas)):
@@ -89,9 +94,9 @@ class Sampler:
                 sparse_label[prediction] = 1
                 new_context.append(sparse_label)
 
-                self.recursive_beam_search(model, input_img, new_context, beam, node, sequence_length - 1)
+                self.recursive_beam_search(model, input_img_tablet, input_img_desktop, new_context, beam, node, sequence_length - 1)
 
-    def predict_beam_search(self, model, input_img, beam_width=3, require_sparse_label=True, sequence_length=150):
+    def predict_beam_search(self, model, input_img_tablet, input_img_desktop, beam_width=3, require_sparse_label=True, sequence_length=150):
         predictions = START_TOKEN
         out_probas = []
 
@@ -102,7 +107,7 @@ class Sampler:
 
         beam = BeamSearch(beam_width=beam_width)
 
-        self.recursive_beam_search(model, input_img, current_context, beam, beam.root, sequence_length)
+        self.recursive_beam_search(model,  input_img_tablet, input_img_desktop, current_context, beam, beam.root, sequence_length)
 
         predicted_sequence, probas_sequence = beam.search()
 

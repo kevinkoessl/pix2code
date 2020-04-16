@@ -16,8 +16,6 @@ from classes.model.pix2code import *
 
 def run(input_path, output_path, is_memory_intensive=False, pretrained_model=None):
 
-    np.random.seed(1234)
-
     dataset = Dataset()
 
     dataset.load(input_path, generate_binary_sequences=True)

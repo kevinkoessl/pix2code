@@ -9,13 +9,12 @@ from keras.optimizers import RMSprop
 from keras import *
 from .Config import *
 from .AModel import *
-
+from keras.utils.vis_utils import plot_model
 
 class pix2code(AModel):
     def __init__(self, input_shape, output_size, output_path):
         AModel.__init__(self, input_shape, output_size, output_path)
         self.name = "pix2code"
-
         image_model = Sequential()
         image_model.add(Conv2D(32, (3, 3), padding='valid', activation='relu', input_shape=input_shape))
         image_model.add(Conv2D(32, (3, 3), padding='valid', activation='relu'))
@@ -40,11 +39,35 @@ class pix2code(AModel):
 
         image_model.add(RepeatVector(CONTEXT_LENGTH))
 
+        image_model_desktop = Sequential()
+        image_model_desktop.add(Conv2D(32, (3, 3), padding='valid', activation='relu', input_shape=input_shape))
+        image_model_desktop.add(Conv2D(32, (3, 3), padding='valid', activation='relu'))
+        image_model_desktop.add(MaxPooling2D(pool_size=(2, 2)))
+        image_model_desktop.add(Dropout(0.25))
+
+        image_model_desktop.add(Conv2D(64, (3, 3), padding='valid', activation='relu'))
+        image_model_desktop.add(Conv2D(64, (3, 3), padding='valid', activation='relu'))
+        image_model_desktop.add(MaxPooling2D(pool_size=(2, 2)))
+        image_model_desktop.add(Dropout(0.25))
+
+        image_model_desktop.add(Conv2D(128, (3, 3), padding='valid', activation='relu'))
+        image_model_desktop.add(Conv2D(128, (3, 3), padding='valid', activation='relu'))
+        image_model_desktop.add(MaxPooling2D(pool_size=(2, 2)))
+        image_model_desktop.add(Dropout(0.25))
+
+        image_model_desktop.add(Flatten())
+        image_model_desktop.add(Dense(1024, activation='relu'))
+        image_model_desktop.add(Dropout(0.3))
+        image_model_desktop.add(Dense(1024, activation='relu'))
+        image_model_desktop.add(Dropout(0.3))
+
+        image_model_desktop.add(RepeatVector(CONTEXT_LENGTH))
+
         visual_input_tablet = Input(shape=input_shape)
         encoded_image_tablet = image_model(visual_input_tablet)
 
         visual_input_desktop = Input(shape=input_shape)
-        encoded_image_desktop = image_model(visual_input_desktop)
+        encoded_image_desktop = image_model_desktop(visual_input_desktop)
 
         language_model = Sequential()
         language_model.add(LSTM(128, return_sequences=True, input_shape=(CONTEXT_LENGTH, output_size)))
@@ -65,7 +88,7 @@ class pix2code(AModel):
         self.model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
     def fit(self, images_tablet, images_desktop, partial_captions, next_words):
-        self.model.fit([images_tablet, images_desktop, partial_captions], next_words, shuffle=False, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=1)
+        self.model.fit([images_tablet, images_desktop, partial_captions], next_words, shuffle=True, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=1)
         self.save()
 
     def fit_generator(self, generator, steps_per_epoch):
@@ -73,7 +96,7 @@ class pix2code(AModel):
         self.save()
 
     def predict(self, image_tablet, image_desktop, partial_caption):
-        return self.model.predict([image_tablet, image_desktop, partial_caption], verbose=0)[0]
+        return self.model.predict([image_tablet, image_desktop, partial_caption], verbose=0, batch_size=BATCH_SIZE)[0]
 
     def predict_batch(self, images_tablet, images_desktop, partial_captions):
         return self.model.predict([images_tablet, images_desktop, partial_captions], verbose=1)
