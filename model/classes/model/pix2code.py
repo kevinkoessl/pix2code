@@ -11,6 +11,7 @@ from keras import *
 from .Config import *
 from .AModel import *
 from keras.utils.vis_utils import plot_model
+import matplotlib.pyplot as plt
 
 class pix2code(AModel):
     def __init__(self, input_shape, output_size, output_path):
@@ -94,8 +95,16 @@ class pix2code(AModel):
 
     def fit(self, images_tablet, images_desktop, partial_captions, next_words):
         # adjustet the input in order to deal with two images
-        self.model.fit([images_tablet, images_desktop, partial_captions], next_words, shuffle=True, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=1)
+        history = self.model.fit([images_tablet, images_desktop, partial_captions], next_words, shuffle=True, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=1)
         self.save()
+        # Plot training & validation loss values
+        plt.plot(history.history['loss'])
+        plt.title('Model loss')
+        plt.ylabel('Loss')
+        plt.xlabel('Epoch')
+        plt.legend(['Train', 'Test'], loc='upper left')
+        plt.show()
+        plt.savefig('loss.png')
 
     def predict(self, image_tablet, image_desktop, partial_caption):
         return self.model.predict([image_tablet, image_desktop, partial_caption], verbose=0, batch_size=BATCH_SIZE)[0]
