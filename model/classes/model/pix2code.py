@@ -91,10 +91,6 @@ class pix2code(AModel):
         self.model.fit([images_tablet, images_desktop, partial_captions], next_words, shuffle=True, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=1)
         self.save()
 
-    def fit_generator(self, generator, steps_per_epoch):
-        self.model.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=EPOCHS, verbose=1)
-        self.save()
-
     def predict(self, image_tablet, image_desktop, partial_caption):
         return self.model.predict([image_tablet, image_desktop, partial_caption], verbose=0, batch_size=BATCH_SIZE)[0]
 
