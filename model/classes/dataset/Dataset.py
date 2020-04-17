@@ -1,5 +1,6 @@
 from __future__ import print_function
 __author__ = 'Tony Beltramelli - www.tonybeltramelli.com'
+__modified__ = 'Kevin Kössl'
 
 import os
 
@@ -7,7 +8,7 @@ from classes.Vocabulary import *
 from classes.Utils import *
 from classes.model.Config import *
 
-
+#adjusted in order to deal with two input images
 class Dataset:
     def __init__(self):
         self.input_shape = None

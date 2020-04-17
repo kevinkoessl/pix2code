@@ -12,6 +12,7 @@ from classes.dataset.Generator import *
 from classes.model.pix2code import *
 
 
+#adjusted in order to deal with two input images, removed the option to train with a generator
 def run(input_path, output_path, pretrained_model=None):
 
     dataset = Dataset()

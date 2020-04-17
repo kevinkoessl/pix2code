@@ -2,6 +2,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 __author__ = 'Tony Beltramelli - www.tonybeltramelli.com'
+__modified__ = 'Kevin Kössl'
 
 import sys
 
@@ -34,10 +35,9 @@ sampler = Sampler(trained_weights_path, input_shape, output_size, CONTEXT_LENGTH
 
 file_name = basename(input_path_tablet)[:basename(input_path_tablet).find(".")]
 
+#adjusted in order to deal with two input images
 evaluation_img_tablet = Utils.get_preprocessed_img(input_path_tablet, IMAGE_SIZE)
-Utils.show(evaluation_img_tablet)
 evaluation_img_desktop = Utils.get_preprocessed_img(input_path_desktop, IMAGE_SIZE)
-Utils.show(evaluation_img_desktop)
 
 if search_method == "greedy":
     result, _ = sampler.predict_greedy(model, np.array([evaluation_img_tablet]), np.array([evaluation_img_desktop]))

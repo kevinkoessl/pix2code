@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 __author__ = 'Tony Beltramelli - www.tonybeltramelli.com'
+__modified__ = 'Kevin Kössl'
 
 from keras.layers import Input, Dense, Dropout, \
                          RepeatVector, LSTM, concatenate, \
@@ -15,6 +16,8 @@ class pix2code(AModel):
     def __init__(self, input_shape, output_size, output_path):
         AModel.__init__(self, input_shape, output_size, output_path)
         self.name = "pix2code"
+
+        # image_model_that deals with the tablet viewport
         image_model = Sequential()
         image_model.add(Conv2D(32, (3, 3), padding='valid', activation='relu', input_shape=input_shape))
         image_model.add(Conv2D(32, (3, 3), padding='valid', activation='relu'))
@@ -39,6 +42,7 @@ class pix2code(AModel):
 
         image_model.add(RepeatVector(CONTEXT_LENGTH))
 
+        # image_model_that deals with the desktop viewport
         image_model_desktop = Sequential()
         image_model_desktop.add(Conv2D(32, (3, 3), padding='valid', activation='relu', input_shape=input_shape))
         image_model_desktop.add(Conv2D(32, (3, 3), padding='valid', activation='relu'))
@@ -76,6 +80,7 @@ class pix2code(AModel):
         textual_input = Input(shape=(CONTEXT_LENGTH, output_size))
         encoded_text = language_model(textual_input)
 
+        #concatenate the outputs of both image models and the language model
         decoder = concatenate([encoded_image_tablet, encoded_image_desktop, encoded_text])
 
         decoder = LSTM(512, return_sequences=True)(decoder)
@@ -88,6 +93,7 @@ class pix2code(AModel):
         self.model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
     def fit(self, images_tablet, images_desktop, partial_captions, next_words):
+        # adjustet the input in order to deal with two images
         self.model.fit([images_tablet, images_desktop, partial_captions], next_words, shuffle=True, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=1)
         self.save()
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
-__author__ = 'Tony Beltramelli - www.tonybeltramelli.com'
+__author__ = 'Kevin Kössl'
 
 import sys
 
@@ -15,7 +15,7 @@ if __name__ == "__main__":
         input_file = argv[0]
     else:
         print("Error: not enough argument supplied:")
-        print("web-compiler.py <path> <file name>")
+        print("responsive-web-compiler.py <path> <file name>")
         exit(0)
 
 FILL_WITH_RANDOM_TEXT = True

@@ -1,6 +1,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 __author__ = 'Tony Beltramelli - www.tonybeltramelli.com'
+__modified__ = 'Kevin Kössl'
 
 from .Vocabulary import *
 from .BeamSearch import *
@@ -21,6 +22,7 @@ class Sampler:
 
         self.context_length = context_length
 
+    # adjusted in order to deal with two input images
     def predict_greedy(self, model, input_img_tablet, input_img_desktop, require_sparse_label=True, sequence_length=150, verbose=False):
         current_context = [self.voc.vocabulary[PLACEHOLDER]] * (self.context_length - 1)
         current_context.append(self.voc.vocabulary[START_TOKEN])
@@ -63,6 +65,7 @@ class Sampler:
 
         return predictions, out_probas
 
+    # adjusted in order to deal with two input images
     def recursive_beam_search(self, model, input_img_tablet, input_img_desktop, current_context, beam, current_node, sequence_length):
         probas = model.predict(input_img_tablet, input_img_desktop, np.array([current_context]))
 
@@ -96,6 +99,7 @@ class Sampler:
 
                 self.recursive_beam_search(model, input_img_tablet, input_img_desktop, new_context, beam, node, sequence_length - 1)
 
+    # adjusted in order to deal with two input images
     def predict_beam_search(self, model, input_img_tablet, input_img_desktop, beam_width=3, require_sparse_label=True, sequence_length=150):
         predictions = START_TOKEN
         out_probas = []

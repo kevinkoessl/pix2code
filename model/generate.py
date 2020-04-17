@@ -2,6 +2,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 __author__ = 'Tony Beltramelli - www.tonybeltramelli.com'
+__modified__ = 'Kevin Kössl'
 
 import os
 import sys
@@ -31,19 +32,22 @@ model.load(trained_model_name)
 
 sampler = Sampler(trained_weights_path, input_shape, output_size, CONTEXT_LENGTH)
 
+#adjusted in order to deal with two input images
 for f in os.listdir(input_path):
     if f.find(".png") != -1:
-        evaluation_img = Utils.get_preprocessed_img("{}/{}".format(input_path, f), IMAGE_SIZE)
+        file_name = basename(f)[:basename(f).find(".")]
+        evaluation_img_tablet = Utils.get_preprocessed_img("{}/{}_tablet".format(input_path, file_name), IMAGE_SIZE)
+        evaluation_img_desktop= Utils.get_preprocessed_img("{}/{}_desktop".format(input_path, file_name), IMAGE_SIZE)
 
         file_name = f[:f.find(".png")]
 
         if search_method == "greedy":
-            result, _ = sampler.predict_greedy(model, np.array([evaluation_img]))
+            result, _ = sampler.predict_greedy(model, np.array([evaluation_img_tablet]), np.array([evaluation_img_desktop]))
             print("Result greedy: {}".format(result))
         else:
             beam_width = int(search_method)
             print("Search with beam width: {}".format(beam_width))
-            result, _ = sampler.predict_beam_search(model, np.array([evaluation_img]), beam_width=beam_width)
+            result, _ = sampler.predict_beam_search(model, np.array([evaluation_img]), np.array([evaluation_img_desktop]), beam_width=beam_width)
             print("Result beam: {}".format(result))
 
         with open("{}/{}.gui".format(output_path, file_name), 'w') as out_f:
