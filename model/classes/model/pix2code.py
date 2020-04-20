@@ -91,7 +91,7 @@ class pix2code(AModel):
         self.model = Model(inputs=[visual_input_desktop, visual_input_tablet, textual_input], outputs=decoder)
 
         optimizer = RMSprop(lr=0.0001, clipvalue=1.0)
-        self.model.compile(loss='categorical_crossentropy', optimizer=optimizer)
+        self.model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=[metrics.accuracy])
 
     def fit(self, images_tablet, images_desktop, partial_captions, next_words):
         # adjustet the input in order to deal with two images
@@ -105,6 +105,9 @@ class pix2code(AModel):
         plt.legend(['Train', 'Test'], loc='upper left')
         plt.show()
         plt.savefig('loss.png')
+
+    def evaluate(self, image_tablet, image_desktop, partial_captions, next_words):
+        return self.model.evaluate([image_tablet, image_desktop, partial_captions], next_words, verbose=1)
 
     def predict(self, image_tablet, image_desktop, partial_caption):
         return self.model.predict([image_tablet, image_desktop, partial_caption], verbose=0, batch_size=BATCH_SIZE)[0]

@@ -6,11 +6,14 @@ __modified__ = 'Kevin Kössl'
 from .Vocabulary import *
 from .BeamSearch import *
 from .Utils import *
+from .dataset.Dataset import Dataset
+from .model.Config import CONTEXT_LENGTH
 
 
 class Sampler:
     def __init__(self, voc_path, input_shape, output_size, context_length):
         self.voc = Vocabulary()
+        self.dataset = Dataset()
         self.voc.retrieve(voc_path)
 
         self.input_shape = input_shape
@@ -64,6 +67,50 @@ class Sampler:
                 break
 
         return predictions, out_probas
+
+    def complete_sequence(self, model, input_img_tablet, input_img_desktop, gui_path, require_sparse_label=True, sequence_length=150, verbose=False):
+        gui = open("{}".format(gui_path), 'r')
+        token_sequence = [START_TOKEN]
+        predictions = START_TOKEN
+        for line in gui:
+            line = line.replace(",", " ,").replace("\n", " \n")
+            tokens = line.split(" ")
+            for token in tokens:
+                token_sequence.append(token)
+                predictions += token
+                self.voc.append(token)
+
+        suffix = [PLACEHOLDER] * CONTEXT_LENGTH
+
+        a = np.concatenate([suffix, token_sequence])
+
+        current_context = a[len(a) - CONTEXT_LENGTH:len(a)]
+        current_context = self.dataset.sparsify_labels(current_context, self.voc)
+        for i in range(0, sequence_length):
+            probas = model.predict(input_img_tablet, input_img_desktop, np.array([current_context]))
+
+            prediction = np.argmax(probas)
+
+            new_context = []
+            for j in range(1, self.context_length):
+                new_context.append(current_context[j])
+
+            if require_sparse_label:
+                sparse_label = np.zeros(self.output_size)
+                sparse_label[prediction] = 1
+
+                new_context.append(sparse_label)
+            else:
+                new_context.append(prediction)
+
+            current_context = new_context
+
+            predictions += self.voc.token_lookup[prediction]
+
+            if self.voc.token_lookup[prediction] == END_TOKEN:
+                break
+
+        return predictions
 
     # adjusted in order to deal with two input images
     def recursive_beam_search(self, model, input_img_tablet, input_img_desktop, current_context, beam, current_node, sequence_length):
