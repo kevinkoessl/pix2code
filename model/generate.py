@@ -34,10 +34,11 @@ sampler = Sampler(trained_weights_path, input_shape, output_size, CONTEXT_LENGTH
 
 #adjusted in order to deal with two input images
 for f in os.listdir(input_path):
-    if f.find(".png") != -1:
-        file_name = basename(f)[:basename(f).find(".")]
-        evaluation_img_tablet = Utils.get_preprocessed_img("{}/{}_tablet".format(input_path, file_name), IMAGE_SIZE)
-        evaluation_img_desktop= Utils.get_preprocessed_img("{}/{}_desktop".format(input_path, file_name), IMAGE_SIZE)
+    if f.find("_tablet.png") != -1:
+        file_name = os.path.basename(f)[:os.path.basename(f).find("_")]
+        print(file_name)
+        evaluation_img_tablet = Utils.get_preprocessed_img("{}/{}_tablet.png".format(input_path, file_name), IMAGE_SIZE)
+        evaluation_img_desktop= Utils.get_preprocessed_img("{}/{}_desktop.png".format(input_path, file_name), IMAGE_SIZE)
 
         file_name = f[:f.find(".png")]
 
