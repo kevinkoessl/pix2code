@@ -26,14 +26,14 @@ TRAINING_SET_NAME = "training_set"
 EVALUATION_SET_NAME = "eval_set"
 
 paths = []
-for f in os.listdir(input_path):
+for f in os.listdir("{}/all_data/".format(input_path)):
     if f.find(".gui") != -1:
         path_gui = "{}/{}".format(input_path, f)
         file_name = f[:f.find(".gui")]
 
         #adjusted in order to deal with two input images
-        if os.path.isfile("{}/{}_tablet.png".format(input_path, file_name)):
-            if os.path.isfile("{}/{}_desktop.png".format(input_path, file_name)):
+        if os.path.isfile("{}/all_data/{}_tablet.png".format(input_path, file_name)):
+            if os.path.isfile("{}/all_data/{}_desktop.png".format(input_path, file_name)):
                 paths.append(file_name)
 
 evaluation_samples_number = len(paths) / (distribution + 1)
@@ -50,10 +50,11 @@ train_set = []
 
 hashes = []
 for path in paths:
+    print(path)
     if sys.version_info >= (3,):
-        f = open("{}/{}.gui".format(input_path, path), 'r', encoding='utf-8')
+        f = open("{}/all_data/{}.gui".format(input_path, path), 'r', encoding='utf-8')
     else:
-        f = open("{}/{}.gui".format(input_path, path), 'r')
+        f = open("{}/all_data/{}.gui".format(input_path, path), 'r')
 
     with f:
         chars = ""
@@ -89,14 +90,14 @@ if not os.path.exists("{}/{}".format(os.path.dirname(input_path), TRAINING_SET_N
 
 #adjusted in order to deal with two input images
 for path in eval_set:
-    shutil.copyfile("{}/{}_tablet.png".format(input_path, path), "{}/{}/{}_tablet.png".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
-    shutil.copyfile("{}/{}_desktop.png".format(input_path, path), "{}/{}/{}_desktop.png".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
-    shutil.copyfile("{}/{}.gui".format(input_path, path), "{}/{}/{}.gui".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
+    shutil.copyfile("{}/all_data/{}_tablet.png".format(input_path, path), "{}/{}/{}_tablet.png".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
+    shutil.copyfile("{}/all_data/{}_desktop.png".format(input_path, path), "{}/{}/{}_desktop.png".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
+    shutil.copyfile("{}/all_data/{}.gui".format(input_path, path), "{}/{}/{}.gui".format(os.path.dirname(input_path), EVALUATION_SET_NAME, path))
 #adjusted in order to deal with two input images
 for path in train_set:
-    shutil.copyfile("{}/{}_tablet.png".format(input_path, path), "{}/{}/{}_tablet.png".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
-    shutil.copyfile("{}/{}_desktop.png".format(input_path, path), "{}/{}/{}_desktop.png".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
-    shutil.copyfile("{}/{}.gui".format(input_path, path), "{}/{}/{}.gui".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
+    shutil.copyfile("{}/all_data/{}_tablet.png".format(input_path, path), "{}/{}/{}_tablet.png".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
+    shutil.copyfile("{}/all_data/{}_desktop.png".format(input_path, path), "{}/{}/{}_desktop.png".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
+    shutil.copyfile("{}/all_data/{}.gui".format(input_path, path), "{}/{}/{}.gui".format(os.path.dirname(input_path), TRAINING_SET_NAME, path))
 
-print("Training dataset: {}/training_set".format(os.path.dirname(input_path), path))
-print("Evaluation dataset: {}/eval_set".format(os.path.dirname(input_path), path))
+print("Training dataset: {}training_set".format(input_path))
+print("Evaluation dataset: {}eval_set".format(input_path))

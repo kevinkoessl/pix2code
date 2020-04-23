@@ -77,7 +77,7 @@ class Dataset:
 
         print("Dataset size: {}".format(self.size))
         print("Vocabulary size: {}".format(self.voc.size))
-
+        print(self.voc.vocabulary)
         self.input_shape = self.input_images_tablet[0].shape
         self.output_size = self.voc.size
 
