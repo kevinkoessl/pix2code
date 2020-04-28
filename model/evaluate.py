@@ -59,9 +59,9 @@ def run(input_path, trained_model):
 if __name__ == "__main__":
     argv = sys.argv[1:]
 
-    if len(argv) < 3:
+    if len(argv) < 2:
         print("Error: not enough argument supplied:")
-        print("evaluate.py <input path> <output path> <trained weights (optional)>")
+        print("evaluate.py <input path> <trained weights (optional)>")
         exit(0)
     else:
         input_path = argv[0]

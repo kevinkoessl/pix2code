@@ -16,13 +16,13 @@ Both the source code and the datasets are provided to foster future research in 
 ## Setup
 ### Prerequisites
 
-- Python 2 or 3
-- pip
+- Python 3.6
+- pip3
 
 ### Install dependencies
 
 ```sh
-pip install -r  requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ## Usage
@@ -30,9 +30,11 @@ pip install -r  requirements.txt
 Prepare the data:
 ```sh
 # generate data-set according to ../data-generation/README.md
+
+# Create directory ./datasets/responsive_web/all_data if it doesn't exist
 # Copy and Paste the generated Image and gui files directly into ./datasets/responsive_web/all_data
 
-cd ../model
+cd /model
 
 # split training set and evaluation set while ensuring no training example in the evaluation set
 # usage: build_datasets.py <input path> <distribution (default: 6)>
@@ -40,12 +42,15 @@ cd ../model
 
 # transform images (normalized pixel values and resized pictures) in training dataset to numpy arrays (smaller files if you need to upload the set to train your model in the cloud)
 # usage: convert_imgs_to_arrays.py <input path> <output path>
-./convert_imgs_to_arrays.py ../datasets/responsive_web/training_set ../datasets/web/training_features
+./convert_imgs_to_arrays.py ../datasets/responsive_web/training_set ../datasets/responsive_web/training_features
 ```
 
-Train the model:
+### Train the model
+The directory /bin contains trained weights and meta data for training/sampling
+If you have pretrained weights they can be placed here. The Configurations of these weights need to the same as in the model/classes/model/Config.py (e.g. Image Size)
 ```sh
 mkdir bin
+
 cd model
 
 # provide input path to training data and output path to save trained model and metadata
@@ -53,8 +58,8 @@ cd model
 ./train.py ../datasets/responsive_web/training_set ../bin
 
 # train on images pre-processed as arrays
-./train.py ../datasets/web/training_features ../bin
-
+./train.py ../datasets/responsive_web/training_features ../bin
+```
 Generate code for batch of GUIs:
 ```sh
 mkdir code
@@ -71,7 +76,7 @@ cd model
 ./generate.py ../bin pix2code ../gui_screenshots ../code 3
 ```
 
-Generate code for a single GUI image:
+Generate code for a single GUI image-pair:
 ```sh
 mkdir code
 cd model
@@ -79,12 +84,25 @@ cd model
 # generate DSL code (.gui file), the default search method is greedy
 # usage: sample.py <trained weights path> <trained model name> <input image> <output path> <search method (default: greedy)>
 ./sample.py ../bin pix2code ../test_gui.png ../code
+```
 
-# equivalent to command above
-./sample.py ../bin pix2code ../test_gui.png ../code greedy
+Complete unfinished code sequence for a single GUI image:
+```sh
+mkdir code
+cd model
 
-# generate DSL code with beam search and a beam width of size 3
-./sample.py ../bin pix2code ../test_gui.png ../code 3
+# generate DSL code (.gui file), the default search method is greedy
+# usage: sample.py <trained weights path> <trained model name> <input image> <output path>
+./complete_sequence.py ../bin pix2code ../test_gui_tablet.png ../test_gui_desktop.png ../code
+```
+### Evaluate model with evaluation set
+Occasionally it might happen, that the evaluation set uses a smaller vocabulary than the trained model. In that case a new evaluation set with the same vocabulary size needs to be generated
+```
+# Convert evaluation set into numpy arrays
+./convert_imgs_to_arrays.py ../datasets/responsive_web/eval_set ../datasets/responsive_web/eval_features
+
+# usage: evaluate.py <input path> <trained weights>
+./evaluate.py ../datasets/responsive_web/eval_features ../bin/pix2code.h5
 ```
 
 Compile generated code to target language:
