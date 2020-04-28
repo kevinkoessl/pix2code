@@ -85,7 +85,7 @@ cd model
 
 # Complete unfinished DSL code (.gui file)
 # usage: complete_sequence.py <trained weights path> <trained model name> <input image tablet> <input image desktop> <input gui file> <output path>
-./complete_sequence.py ../bin pix2code ../test_gui_tablet.png ../test_gui_desktop.png ../test_gui.gui ../code
+./complete_sequence.py ../bin pix2code ../test_gui_tablet.png ../test_gui_desktop.png ../incomplete_gui.gui ../code
 ```
 ### Evaluate model with evaluation set
 Occasionally it might happen, that the evaluation set uses a smaller vocabulary than the trained model. In that case a new evaluation set with the same vocabulary size needs to be generated
