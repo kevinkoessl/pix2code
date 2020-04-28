@@ -50,7 +50,6 @@ train_set = []
 
 hashes = []
 for path in paths:
-    print(path)
     if sys.version_info >= (3,):
         f = open("{}/all_data/{}.gui".format(input_path, path), 'r', encoding='utf-8')
     else:
