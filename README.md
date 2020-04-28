@@ -88,7 +88,7 @@ cd model
 ./complete_sequence.py ../bin pix2code ../test_gui_tablet.png ../test_gui_desktop.png ../incomplete_gui.gui ../code
 ```
 ### Evaluate model with evaluation set
-Occasionally it might happen, that the evaluation set uses a smaller vocabulary than the trained model. (ValueError: Shapes (48, 512) and (50, 512) are incompatible). In that case a new evaluation set with the same vocabulary size needs to be generated
+Occasionally it might happen, that the evaluation set uses a smaller vocabulary than the trained model. (ValueError: Shapes (48, 512) and (50, 512) are incompatible). In that case a new evaluation set with the same vocabulary size needs to be generated. Sometimes a qickfix is to include the universal sample from the data-generation folder into the evaluation set. Some Tokens that might be missing in the Evaluation set are *btn-primary, btn-secondary, btn-success, btn-warning, btn-outline-primary, btn-outline-secondary btn-outline-success, btn-outline-warning, md-11 and lg-11*.
 ```
 # Convert evaluation set into numpy arrays
 ./convert_imgs_to_arrays.py ../datasets/responsive_web/eval_set ../datasets/responsive_web/eval_features
