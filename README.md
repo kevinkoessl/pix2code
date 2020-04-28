@@ -37,10 +37,10 @@ Prepare the data:
 cd /model
 
 # split training set and evaluation set while ensuring no training example in the evaluation set
-# usage: build_datasets.py <input path> <distribution (default: 6)>
+# usage: build_datasets.py <input path>
 ./build_datasets.py ../datasets/responsive_web/
 
-# transform images (normalized pixel values and resized pictures) in training dataset to numpy arrays (smaller files if you need to upload the set to train your model in the cloud)
+# transform images (normalized pixel values and resized pictures) in training dataset to numpy arrays
 # usage: convert_imgs_to_arrays.py <input path> <output path>
 ./convert_imgs_to_arrays.py ../datasets/responsive_web/training_set ../datasets/responsive_web/training_features
 ```
@@ -55,45 +55,37 @@ cd model
 
 # provide input path to training data and output path to save trained model and metadata
 # usage: train.py <input path> <output path> <is memory intensive (default: 0)> <pretrained weights (optional)>
-./train.py ../datasets/responsive_web/training_set ../bin
-
 # train on images pre-processed as arrays
 ./train.py ../datasets/responsive_web/training_features ../bin
 ```
-Generate code for batch of GUIs:
+### Generate code for batch of GUIs:
 ```sh
 mkdir code
 cd model
 
-# generate DSL code (.gui file), the default search method is greedy
-# usage: generate.py <trained weights path> <trained model name> <input image> <output path> <search method (default: greedy)>
+# generate DSL code (.gui files) for a batch of mockup image pairs
+# usage: generate.py <trained weights path> <trained model name> <input path> <output path>
 ./generate.py ../bin pix2code ../gui_screenshots ../code
-
-# equivalent to command above
-./generate.py ../bin pix2code ../gui_screenshots ../code greedy
-
-# generate DSL code with beam search and a beam width of size 3
-./generate.py ../bin pix2code ../gui_screenshots ../code 3
 ```
 
-Generate code for a single GUI image-pair:
+### Generate code for a single GUI image-pair:
 ```sh
 mkdir code
 cd model
 
 # generate DSL code (.gui file), the default search method is greedy
-# usage: sample.py <trained weights path> <trained model name> <input image> <output path> <search method (default: greedy)>
-./sample.py ../bin pix2code ../test_gui.png ../code
+# usage: sample.py <trained weights path> <trained model name> <input image tablet> <input image desktop> <output path>
+./sample.py ../bin pix2code ../test_gui_tablet.png ../test_gui_desktop.png ../code
 ```
 
-Complete unfinished code sequence for a single GUI image:
+### Complete unfinished code sequence for a single GUI image:
 ```sh
 mkdir code
 cd model
 
-# generate DSL code (.gui file), the default search method is greedy
-# usage: sample.py <trained weights path> <trained model name> <input image> <output path>
-./complete_sequence.py ../bin pix2code ../test_gui_tablet.png ../test_gui_desktop.png ../code
+# Complete unfinished DSL code (.gui file)
+# usage: complete_sequence.py <trained weights path> <trained model name> <input image tablet> <input image desktop> <input gui file> <output path>
+./complete_sequence.py ../bin pix2code ../test_gui_tablet.png ../test_gui_desktop.png ../test_gui.gui ../code
 ```
 ### Evaluate model with evaluation set
 Occasionally it might happen, that the evaluation set uses a smaller vocabulary than the trained model. In that case a new evaluation set with the same vocabulary size needs to be generated
@@ -105,7 +97,7 @@ Occasionally it might happen, that the evaluation set uses a smaller vocabulary 
 ./evaluate.py ../datasets/responsive_web/eval_features ../bin/pix2code.h5
 ```
 
-Compile generated code to target language:
+### Compile generated code to target language:
 ```sh
 cd compiler
 
