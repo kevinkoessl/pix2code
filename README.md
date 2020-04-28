@@ -36,7 +36,7 @@ cd ../model
 
 # split training set and evaluation set while ensuring no training example in the evaluation set
 # usage: build_datasets.py <input path> <distribution (default: 6)>
-./build_datasets.py ../datasets/responsive_web/all_data
+./build_datasets.py ../datasets/responsive_web/
 
 # transform images (normalized pixel values and resized pictures) in training dataset to numpy arrays (smaller files if you need to upload the set to train your model in the cloud)
 # usage: convert_imgs_to_arrays.py <input path> <output path>

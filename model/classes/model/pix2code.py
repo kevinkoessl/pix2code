@@ -91,7 +91,7 @@ class pix2code(AModel):
         self.model = Model(inputs=[visual_input_desktop, visual_input_tablet, textual_input], outputs=decoder)
 
         optimizer = RMSprop(lr=0.0001, clipvalue=1.0)
-        self.model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=[metrics.accuracy])
+        self.model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
     def fit(self, images_tablet, images_desktop, partial_captions, next_words):
         # adjustet the input in order to deal with two images
