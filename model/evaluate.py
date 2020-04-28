@@ -51,7 +51,6 @@ def run(input_path, trained_model):
             correct_samples += 1
 
     print("loss: {}".format(evaluation))
-    print(len(dataset.partial_sequences))
     accuracy = correct_samples / len(dataset.partial_sequences)
     print("accuracy: {}".format(accuracy))
 
