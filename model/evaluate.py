@@ -16,7 +16,7 @@ import sys
 from classes.model.pix2code import *
 from classes.dataset.Dataset import *
 
-def run(input_path, output_path, trained_model):
+def run(input_path, trained_model):
 
     dataset = Dataset()
 
@@ -30,7 +30,7 @@ def run(input_path, output_path, trained_model):
     print(dataset.input_images_tablet.shape, dataset.input_images_desktop.shape, dataset.partial_sequences.shape, dataset.next_words.shape)
 
 
-    model = pix2code(input_shape, output_size, output_path)
+    model = pix2code(input_shape, output_size, "")
 
     if trained_model is not None:
         model.model.load_weights(trained_model)
@@ -65,8 +65,7 @@ if __name__ == "__main__":
         exit(0)
     else:
         input_path = argv[0]
-        output_path = argv[1]
-        trained_weigths = argv[2]
+        trained_weigths = argv[1]
 
 
-    run(input_path, output_path, trained_weigths)
+    run(input_path, trained_weigths)
