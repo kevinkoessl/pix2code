@@ -88,7 +88,7 @@ cd model
 ./complete_sequence.py ../bin pix2code ../test_gui_tablet.png ../test_gui_desktop.png ../incomplete_gui.gui ../code
 ```
 ### Evaluate model with evaluation set
-Occasionally it might happen, that the evaluation set uses a smaller vocabulary than the trained model. In that case a new evaluation set with the same vocabulary size needs to be generated
+Occasionally it might happen, that the evaluation set uses a smaller vocabulary than the trained model. (ValueError: Shapes (48, 512) and (50, 512) are incompatible). In that case a new evaluation set with the same vocabulary size needs to be generated
 ```
 # Convert evaluation set into numpy arrays
 ./convert_imgs_to_arrays.py ../datasets/responsive_web/eval_set ../datasets/responsive_web/eval_features
